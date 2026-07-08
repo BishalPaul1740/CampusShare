@@ -1,0 +1,25 @@
+# Dependencies
+backend/node_modules/
+
+# Environment files
+backend/.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Runtime uploads
+backend/src/public/uploads/
+
+# Coverage
+coverage/
+
+# Temporary files
+*.tmp
