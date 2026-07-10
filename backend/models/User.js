@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema(
     {
@@ -6,7 +7,7 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: [true, "Name is required"],
             trim: true,
-            minlength: 2,
+            minlength: 3,
             maxlength: 50
         },
 
@@ -25,7 +26,7 @@ const userSchema = new mongoose.Schema(
         password: {
             type: String,
             required: [true, "Password is required"],
-            minlength: 6,
+            minlength: 3,
             select: false
         },
 
@@ -69,8 +70,14 @@ const userSchema = new mongoose.Schema(
         },
 
         profileImage: {
-            type: String,
-            default: ""
+            url: {
+                type: String,
+                default: ""
+            },
+            public_id: {
+                type: String,
+                default: ""
+            }
         },
 
         bio: {
@@ -118,7 +125,8 @@ const userSchema = new mongoose.Schema(
         }
     },
     {
-        timestamps: true
+        timestamps: true,
+        versionKey: false
     }
 );
 
@@ -129,5 +137,26 @@ const userSchema = new mongoose.Schema(
 // userSchema.index({ rollNumber: 1 });
 
 userSchema.index({ role: 1 });
+
+userSchema.pre("save", async function (next) {
+
+    if (!this.isModified("password")) {
+        return;
+    }
+
+    this.password = await bcrypt.hash(this.password, 10);
+
+    // next();
+
+});
+
+userSchema.methods.comparePassword = async function (enteredPassword) {
+
+    return await bcrypt.compare(
+        enteredPassword,
+        this.password
+    );
+
+};
 
 module.exports = mongoose.model("User", userSchema);
