@@ -1,0 +1,432 @@
+<!-- ========================================= -->
+<!-- Hero Section -->
+<!-- ========================================= -->
+
+<section class="hero-section">
+
+    <div class="container">
+
+        <div class="row align-items-center gy-5">
+
+            <div class="col-lg-6">
+
+                <span class="badge bg-primary-subtle text-primary px-3 py-2 mb-3">
+
+                    Campus Resource Sharing Platform
+
+                </span>
+
+                <h1 class="display-3 fw-bold hero-title">
+
+                    Share Campus
+                    <span class="text-primary">
+
+                        Resources
+
+                    </span>
+
+                    Smarter.
+
+                </h1>
+
+                <p class="lead text-secondary mt-4">
+
+                    Borrow books, laptops, cameras,
+                    electronics and laboratory equipment
+                    from your campus community with ease.
+
+                </p>
+
+                <div class="mt-4">
+
+                    <a href="#"
+                       class="btn btn-primary btn-lg me-3">
+
+                        Browse Resources
+
+                    </a>
+
+                    <a href="/register"
+                       class="btn btn-outline-primary btn-lg">
+
+                        Join CampusShare
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-6 text-center">
+
+                <img
+                    src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=900&q=80"
+                    class="img-fluid hero-image rounded-4 shadow-lg"
+                    alt="Students">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ========================================= -->
+<!-- Search -->
+<!-- ========================================= -->
+
+<section class="search-section">
+
+    <div class="container">
+
+        <div class="search-box shadow">
+
+            <form>
+
+                <div class="input-group input-group-lg">
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Search books, laptops, cameras, projectors...">
+
+                    <button
+                        class="btn btn-primary"
+                        type="submit">
+
+                        <i class="bi bi-search"></i>
+
+                        Search
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ========================================= -->
+<!-- Statistics -->
+<!-- ========================================= -->
+
+<section class="stats-section">
+
+    <div class="container">
+
+        <div class="row g-4">
+
+            <div class="col-md-3">
+
+                <div class="stat-card">
+
+                    <i class="bi bi-box-seam stat-icon"></i>
+
+                    <h2>500+</h2>
+
+                    <p>Resources</p>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <div class="stat-card">
+
+                    <i class="bi bi-people stat-icon"></i>
+
+                    <h2>1200+</h2>
+
+                    <p>Students</p>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <div class="stat-card">
+
+                    <i class="bi bi-arrow-left-right stat-icon"></i>
+
+                    <h2>850+</h2>
+
+                    <p>Borrowings</p>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <div class="stat-card">
+
+                    <i class="bi bi-award stat-icon"></i>
+
+                    <h2>99%</h2>
+
+                    <p>Satisfaction</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================= -->
+<!-- Categories -->
+<!-- ========================================= -->
+
+<section class="category-section">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h2 class="fw-bold">
+
+                Browse Categories
+
+            </h2>
+
+            <p class="text-secondary">
+
+                Discover resources available across different categories.
+
+            </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            <%
+                const categories = [
+                    {
+                        name: "Books",
+                        icon: "bi-book"
+                    },
+                    {
+                        name: "Laptops",
+                        icon: "bi-laptop"
+                    },
+                    {
+                        name: "Cameras",
+                        icon: "bi-camera"
+                    },
+                    {
+                        name: "Projectors",
+                        icon: "bi-projector"
+                    },
+                    {
+                        name: "Sports",
+                        icon: "bi-dribbble"
+                    },
+                    {
+                        name: "Arduino",
+                        icon: "bi-cpu"
+                    },
+                    {
+                        name: "Electronics",
+                        icon: "bi-motherboard"
+                    },
+                    {
+                        name: "Lab Equipment",
+                        icon: "bi-tools"
+                    }
+                ];
+            %>
+
+            <% categories.forEach(category => { %>
+
+                <div class="col-lg-3 col-md-4 col-sm-6">
+
+                    <div class="category-card">
+
+                        <div class="category-icon">
+
+                            <i class="bi <%= category.icon %>"></i>
+
+                        </div>
+
+                        <h5>
+
+                            <%= category.name %>
+
+                        </h5>
+
+                        <p>
+
+                            Explore available resources.
+
+                        </p>
+
+                        <a href="#"
+                           class="stretched-link"></a>
+
+                    </div>
+
+                </div>
+
+            <% }) %>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================= -->
+<!-- Featured Resources -->
+<!-- ========================================= -->
+
+<section class="featured-section">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h2 class="fw-bold">
+
+                Featured Resources
+
+            </h2>
+
+            <p class="text-secondary">
+
+                Some of the most popular resources available on CampusShare.
+
+            </p>
+
+        </div>
+
+        <%
+            const resources = [
+
+                {
+                    title: "Data Structures Book",
+                    category: "Books",
+                    image: "https://placehold.co/600x400?text=Book"
+                },
+
+                {
+                    title: "Dell Inspiron Laptop",
+                    category: "Laptop",
+                    image: "https://placehold.co/600x400?text=Laptop"
+                },
+
+                {
+                    title: "Canon DSLR Camera",
+                    category: "Camera",
+                    image: "https://placehold.co/600x400?text=Camera"
+                }
+
+            ];
+        %>
+
+        <div class="row g-4">
+
+            <% resources.forEach(resource => { %>
+
+                <div class="col-lg-4">
+
+                    <div class="card resource-card h-100">
+
+                        <img
+                            src="<%= resource.image %>"
+                            class="card-img-top"
+                            alt="<%= resource.title %>">
+
+                        <div class="card-body">
+
+                            <span class="badge bg-primary mb-2">
+
+                                <%= resource.category %>
+
+                            </span>
+
+                            <h5 class="card-title">
+
+                                <%= resource.title %>
+
+                            </h5>
+
+                            <p class="text-secondary">
+
+                                Available for borrowing.
+
+                            </p>
+
+                            <a
+                                href="#"
+                                class="btn btn-primary">
+
+                                View Details
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            <% }) %>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ========================================= -->
+<!-- Call To Action -->
+<!-- ========================================= -->
+
+<section class="cta-section">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-8 text-center">
+
+                <h2 class="fw-bold text-white mb-4">
+
+                    Ready to Share Your Resources?
+
+                </h2>
+
+                <p class="lead text-white-50 mb-5">
+
+                    Join CampusShare today and help build a smarter,
+                    more collaborative campus community.
+
+                </p>
+
+                <a
+                    href="/register"
+                    class="btn btn-light btn-lg px-5">
+
+                    Get Started
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

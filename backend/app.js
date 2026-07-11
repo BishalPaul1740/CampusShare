@@ -84,7 +84,25 @@ const errorHandler = require("./middleware/errorMiddleware");
 
 const authRoutes = require("./routes/authRoutes");
 
+const expressLayouts = require("express-ejs-layouts");
+
+const viewRoutes = require("./routes/viewRoutes");
+
 const app = express();
+
+/*
+|--------------------------------------------------------------------------
+| View Engine
+|--------------------------------------------------------------------------
+*/
+
+app.set("view engine", "ejs");
+
+app.set("views", path.join(__dirname, "views"));
+
+app.use(expressLayouts);
+
+app.set("layout", "layouts/layout");
 
 /*
 |--------------------------------------------------------------------------
@@ -126,11 +144,36 @@ app.use(express.static(path.join(__dirname, "public")));
 |--------------------------------------------------------------------------
 */
 
-app.get("/", (req, res) => {
+// app.get("/", (req, res) => {
+//     res.status(200).json({
+//         success: true,
+//         message: "CampusShare API is running",
+//     });
+// });
+
+// app.use("/api/auth", authRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| View Routes
+|--------------------------------------------------------------------------
+*/
+
+app.use("/", viewRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+*/
+
+app.get("/api", (req, res) => {
+
     res.status(200).json({
         success: true,
-        message: "CampusShare API is running",
+        message: "CampusShare API is running"
     });
+
 });
 
 app.use("/api/auth", authRoutes);

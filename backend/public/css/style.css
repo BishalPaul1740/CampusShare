@@ -1,0 +1,478 @@
+body{
+    background:#f8f9fa;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+}
+
+main{
+    flex:1;
+}
+
+.navbar-brand{
+    font-size:1.5rem;
+}
+
+.nav-link{
+    margin-left:10px;
+}
+
+.footer-link{
+    color:#ffffff;
+    text-decoration:none;
+}
+
+.footer-link:hover{
+    text-decoration:underline;
+}
+
+.hero{
+    padding:80px 0;
+}
+
+.section-title{
+    font-weight:700;
+    margin-bottom:30px;
+}
+
+.card{
+    border:none;
+    border-radius:12px;
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+.btn{
+    border-radius:8px;
+}
+
+.hero{
+    padding:90px 0;
+}
+
+.hero img{
+    max-height:450px;
+    object-fit:cover;
+}
+
+.section-title{
+    font-weight:700;
+    margin-bottom:50px;
+}
+
+.card{
+    transition:.3s;
+    border:none;
+}
+
+.card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 .75rem 1.5rem rgba(0,0,0,.15);
+}
+
+.badge{
+    font-size:.8rem;
+}
+
+footer{
+    margin-top:0 !important;
+}
+
+/* =========================================
+   Hero
+========================================= */
+
+.hero-section{
+
+    padding:100px 0 80px;
+
+    background:linear-gradient(
+        180deg,
+        #f8fbff 0%,
+        #ffffff 100%
+    );
+
+}
+
+.hero-title{
+
+    line-height:1.2;
+
+}
+
+.hero-image{
+
+    max-height:480px;
+
+    object-fit:cover;
+
+}
+
+/* =========================================
+   Search
+========================================= */
+
+.search-section{
+
+    margin-top:-35px;
+
+    position:relative;
+
+    z-index:5;
+
+}
+
+.search-box{
+
+    background:#fff;
+
+    border-radius:16px;
+
+    padding:20px;
+
+}
+
+/* =========================================
+   Statistics
+========================================= */
+
+.stats-section{
+
+    padding:80px 0;
+
+}
+
+.stat-card{
+
+    background:#fff;
+
+    border-radius:16px;
+
+    padding:35px;
+
+    text-align:center;
+
+    transition:.3s;
+
+    box-shadow:0 .25rem .75rem rgba(0,0,0,.08);
+
+}
+
+.stat-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.stat-icon{
+
+    font-size:2.3rem;
+
+    color:#0d6efd;
+
+    margin-bottom:15px;
+
+}
+
+.stat-card h2{
+
+    font-weight:700;
+
+    margin-bottom:10px;
+
+}
+
+.stat-card p{
+
+    color:#6c757d;
+
+    margin:0;
+
+}
+
+/* =========================================
+   Categories
+========================================= */
+
+.category-section{
+
+    padding:90px 0;
+
+    background:#f8f9fa;
+
+}
+
+.category-card{
+
+    position:relative;
+
+    background:#ffffff;
+
+    border-radius:18px;
+
+    padding:35px 25px;
+
+    text-align:center;
+
+    transition:.35s;
+
+    height:100%;
+
+    overflow:hidden;
+
+    box-shadow:0 .3rem .8rem rgba(0,0,0,.08);
+
+}
+
+.category-card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:0 1rem 2rem rgba(0,0,0,.12);
+
+}
+
+.category-icon{
+
+    width:75px;
+
+    height:75px;
+
+    margin:auto;
+
+    margin-bottom:20px;
+
+    border-radius:50%;
+
+    background:#e9f2ff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+.category-icon i{
+
+    font-size:2rem;
+
+    color:#0d6efd;
+
+}
+
+.category-card h5{
+
+    font-weight:600;
+
+    margin-bottom:12px;
+
+}
+
+.category-card p{
+
+    color:#6c757d;
+
+    margin-bottom:0;
+
+    font-size:.95rem;
+
+}
+
+/* =========================================
+   Featured Resources
+========================================= */
+
+.featured-section{
+
+    padding:90px 0;
+
+}
+
+.resource-card{
+
+    border:none;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    transition:.35s;
+
+    box-shadow:0 .35rem .8rem rgba(0,0,0,.08);
+
+}
+
+.resource-card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:0 1rem 2rem rgba(0,0,0,.15);
+
+}
+
+.resource-card img{
+
+    height:230px;
+
+    object-fit:cover;
+
+}
+
+/* =========================================
+   Features
+========================================= */
+
+.features-section{
+
+    background:#f8f9fa;
+
+    padding:90px 0;
+
+}
+
+.feature-card{
+
+    background:white;
+
+    border-radius:18px;
+
+    text-align:center;
+
+    padding:40px 30px;
+
+    height:100%;
+
+    transition:.35s;
+
+    box-shadow:0 .35rem .8rem rgba(0,0,0,.08);
+
+}
+
+.feature-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.feature-icon{
+
+    font-size:3rem;
+
+    color:#0d6efd;
+
+    margin-bottom:20px;
+
+}
+
+/* =========================================
+   CTA Section
+========================================= */
+
+.cta-section{
+
+    background:#0d6efd;
+
+    padding:100px 0;
+
+}
+
+/* =========================================
+   Utility
+========================================= */
+
+section{
+
+    overflow:hidden;
+
+}
+
+img{
+
+    max-width:100%;
+
+}
+
+.card{
+
+    border-radius:18px;
+
+}
+
+.btn-lg{
+
+    border-radius:10px;
+
+}
+
+.badge{
+
+    border-radius:20px;
+
+}
+
+/* =========================================
+   Responsive
+========================================= */
+
+@media (max-width:992px){
+
+    .hero-section{
+
+        text-align:center;
+
+        padding-top:70px;
+
+    }
+
+    .hero-title{
+
+        font-size:2.7rem;
+
+    }
+
+    .hero-image{
+
+        margin-top:30px;
+
+    }
+
+}
+
+@media (max-width:768px){
+
+    .hero-title{
+
+        font-size:2.2rem;
+
+    }
+
+    .search-box{
+
+        padding:15px;
+
+    }
+
+    .stat-card{
+
+        padding:25px;
+
+    }
+
+    .category-card{
+
+        padding:25px;
+
+    }
+
+    .resource-card img{
+
+        height:200px;
+
+    }
+
+}
