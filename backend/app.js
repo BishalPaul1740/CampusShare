@@ -12,6 +12,7 @@ const resourceRoutes = require("./routes/resourceRoutes");
 const expressLayouts = require("express-ejs-layouts");
 
 const viewRoutes = require("./routes/viewRoutes");
+const reservationRoutes = require("./routes/reservationRoutes");
 
 const app = express();
 
@@ -95,6 +96,9 @@ app.use("/api/auth", authRoutes);
 */
 
 app.use("/api/resources", resourceRoutes);
+
+
+app.use("/api/reservations", reservationRoutes);
 
 /*
 |--------------------------------------------------------------------------
