@@ -528,11 +528,330 @@ const deleteResource = async (req, res) => {
 
 };
 
+const renderResourcesPage = async (req, res) => {
+
+    try {
+
+        const resources = await Resource.find({
+            isDeleted: false
+        })
+            .populate("owner", "name")
+            .populate("category", "name")
+            .sort({ createdAt: -1 });
+
+        res.render("resources/index", {
+            title: "Resources",
+            currentPage: "/resources",
+            resources
+        });
+
+    } catch (error) {
+
+        return res.status(500).send(error.message);
+
+    }
+
+};
+
+const renderResourceDetailsPage = async (req, res) => {
+
+    try {
+
+        const resource = await Resource.findOne({
+            _id: req.params.id,
+            isDeleted: false
+        })
+            .populate("owner", "name email profileImage")
+            .populate("category", "name");
+
+        if (!resource) {
+            return res.status(404).render("pages/404", {
+                title: "Resource Not Found",
+                currentPage: ""
+            });
+        }
+
+        res.render("resources/show", {
+            title: resource.title,
+            currentPage: "/resources",
+            resource,
+            user: req.user || null
+        });
+
+    } catch (error) {
+
+        return res.status(500).send(error.message);
+
+    }
+
+};
+
+const renderCreateResourcePage = async (req, res) => {
+
+    try {
+
+        const categories = await Category.find({
+            isActive: true
+        }).sort({
+            name: 1
+        });
+
+        res.render("resources/new", {
+            title: "Create Resource",
+            currentPage: "/resources",
+            categories
+        });
+
+    } catch (error) {
+
+        return res.status(500).send(error.message);
+
+    }
+
+};
+
+
+const createResourceView = async (req, res) => {
+
+    try {
+
+        // Validation
+        const { error } = createResourceSchema.validate(req.body);
+
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+
+        const {
+            title,
+            description,
+            category,
+            location,
+            deposit,
+            quantity,
+            availableQuantity,
+            condition,
+            availabilityStatus,
+            tags
+        } = req.body;
+
+        const images = [];
+
+        if (req.files && req.files.length > 0) {
+
+            for (const file of req.files) {
+
+                const result =
+                    await cloudinary.uploader.upload(
+                        file.path,
+                        {
+                            folder: "CampusShare/Resources"
+                        }
+                    );
+
+                images.push({
+                    url: result.secure_url,
+                    public_id: result.public_id
+                });
+
+            }
+
+        }
+        let formattedTags = [];
+
+        if (typeof tags === "string" && tags.trim() !== "") {
+            formattedTags = tags
+                .split(",")
+                .map(tag => tag.trim().toLowerCase())
+                .filter(tag => tag.length > 0);
+        } else if (Array.isArray(tags)) {
+            formattedTags = tags;
+        }
+
+        const resource = await Resource.create({
+
+            title,
+
+            description,
+
+            category,
+
+            owner: req.user._id,
+
+            images,
+
+            location,
+
+            deposit,
+
+            quantity,
+
+            availableQuantity:
+                availableQuantity || quantity,
+
+            condition,
+
+            availabilityStatus,
+
+            tags: formattedTags
+
+        });
+
+        req.user.createdResources.push(resource._id);
+
+        await req.user.save();
+
+        return res.redirect("/resources");
+
+    } catch (error) {
+
+        return res.status(500).send(error.message);
+
+    }
+
+};
+
+const renderEditResourcePage = async (req, res) => {
+
+    try {
+
+        const resource = await Resource.findOne({
+            _id: req.params.id,
+            isDeleted: false
+        });
+
+        if (!resource) {
+            return res.status(404).send("Resource not found.");
+        }
+
+        if (resource.owner.toString() !== req.user._id.toString()) {
+            return res.status(403).send("Access denied.");
+        }
+
+        const categories = await Category.find({
+            isActive: true
+        }).sort({ name: 1 });
+
+        res.render("resources/edit", {
+            title: "Edit Resource",
+            currentPage: "/resources",
+            resource,
+            categories
+        });
+
+    } catch (error) {
+
+        return res.status(500).send(error.message);
+
+    }
+
+};
+
+
+const updateResourceView = async (req, res) => {
+
+    try {
+
+        const { error } = updateResourceSchema.validate(req.body);
+
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+
+        const resource = await Resource.findOne({
+            _id: req.params.id,
+            isDeleted: false
+        });
+
+        if (!resource) {
+            return res.status(404).send("Resource not found.");
+        }
+
+        if (resource.owner.toString() !== req.user._id.toString()) {
+            return res.status(403).send("Access denied.");
+        }
+
+        const {
+            title,
+            description,
+            category,
+            location,
+            deposit,
+            quantity,
+            availableQuantity,
+            condition,
+            availabilityStatus,
+            tags
+        } = req.body;
+
+        resource.title = title;
+        resource.description = description;
+        resource.category = category;
+        resource.location = location;
+        resource.deposit = deposit;
+        resource.quantity = quantity;
+        resource.availableQuantity = availableQuantity;
+        resource.condition = condition;
+        resource.availabilityStatus = availabilityStatus;
+
+        let formattedTags = [];
+
+        if (typeof tags === "string" && tags.trim() !== "") {
+
+            formattedTags = tags
+                .split(",")
+                .map(tag => tag.trim().toLowerCase())
+                .filter(tag => tag.length > 0);
+
+        } else if (Array.isArray(tags)) {
+            formattedTags = tags;
+        }
+        resource.tags = formattedTags;
+
+        if (req.files && req.files.length > 0) {
+
+            for (const image of resource.images) {
+                await cloudinary.uploader.destroy(image.public_id);
+            }
+
+            const images = [];
+
+            for (const file of req.files) {
+
+                const result = await cloudinary.uploader.upload(
+                    file.path,
+                    {
+                        folder: "CampusShare/Resources"
+                    }
+                );
+
+                images.push({
+                    url: result.secure_url,
+                    public_id: result.public_id
+                });
+
+            }
+            resource.images = images;
+        }
+        await resource.save();
+        return res.redirect(`/resources/${resource._id}`);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+
+};
+
 module.exports = {
     createResource,
     getResources,
     getResourceById,
     getSimilarResources,
     updateResource,
-    deleteResource
+    deleteResource,
+    renderResourcesPage,
+    renderResourceDetailsPage,
+    renderCreateResourcePage,
+    createResourceView,
+    renderEditResourcePage,
+    updateResourceView
 };

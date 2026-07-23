@@ -1,0 +1,67 @@
+<form
+    action="/resources/<%= resource._id %>/reserve"
+    method="POST">
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            Start Date
+        </label>
+
+        <input
+            type="date"
+            name="startDate"
+            class="form-control"
+            required>
+
+    </div>
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            End Date
+        </label>
+
+        <input
+            type="date"
+            name="endDate"
+            class="form-control"
+            required>
+
+    </div>
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            Remarks
+        </label>
+
+        <textarea
+            name="remarks"
+            rows="4"
+            class="form-control"
+            placeholder="Any additional information..."></textarea>
+
+    </div>
+
+    <div class="d-flex gap-2">
+
+        <a
+            href="/resources/<%= resource._id %>"
+            class="btn btn-secondary">
+
+            Cancel
+
+        </a>
+
+        <button
+            type="submit"
+            class="btn btn-primary">
+
+            Submit Reservation
+
+        </button>
+
+    </div>
+
+</form>

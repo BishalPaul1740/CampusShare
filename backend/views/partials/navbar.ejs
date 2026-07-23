@@ -40,10 +40,10 @@
 
                 <li class="nav-item">
 
-                    <a class="nav-link"
-                       href="#">
+                    <a class="nav-link <%= currentPage === '/resources' ? 'active' : '' %>"
+                        href="/resources">
 
-                        Resources
+                            Resources
 
                     </a>
 
@@ -64,21 +64,49 @@
 
             <div class="ms-lg-3">
 
-                <a
-                    href="/login"
-                    class="btn btn-outline-light btn-sm me-2">
+                <% if(currentUser){ %>
 
-                    Login
+                    <a
+                        href="/profile"
+                        class="btn btn-outline-light btn-sm me-2">
 
-                </a>
+                        Profile
 
-                <a
-                    href="/register"
-                    class="btn btn-light btn-sm">
+                    </a>
 
-                    Register
+                    <form
+                        action="/logout"
+                        method="POST"
+                        class="d-inline">
 
-                </a>
+                        <button
+                            class="btn btn-light btn-sm">
+
+                            Logout
+
+                        </button>
+
+                    </form>
+
+                <% } else { %>
+
+                    <a
+                        href="/login"
+                        class="btn btn-outline-light btn-sm me-2">
+
+                        Login
+
+                    </a>
+
+                    <a
+                        href="/register"
+                        class="btn btn-light btn-sm">
+
+                        Register
+
+                    </a>
+
+                <% } %>
 
             </div>
 

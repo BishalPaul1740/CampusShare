@@ -57,9 +57,10 @@ const createResourceSchema = Joi.object({
         )
         .default("Available"),
 
-    tags: Joi.array()
-        .items(Joi.string().trim().lowercase())
-        .optional()
+    tags: Joi.alternatives().try(
+        Joi.array().items(Joi.string().trim().lowercase()),
+        Joi.string().allow("")
+    ).optional()
 
 });
 

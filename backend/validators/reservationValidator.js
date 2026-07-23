@@ -37,7 +37,7 @@ const rejectReservationSchema = Joi.object({
     remarks: Joi.string()
         .trim()
         .max(500)
-        .required()
+        .allow("").optional()
 });
 
 /* ===========================

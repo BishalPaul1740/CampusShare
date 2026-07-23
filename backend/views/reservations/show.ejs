@@ -1,0 +1,162 @@
+<div class="container py-5">
+
+    <h2 class="mb-4">
+
+        Reservation Details
+
+    </h2>
+
+    <div class="card shadow">
+
+        <div class="card-body">
+
+            <h3>
+
+                <%= reservation.resource.title %>
+
+            </h3>
+
+            <hr>
+
+            <p>
+
+                <strong>Borrower:</strong>
+
+                <%= reservation.borrower.name %>
+
+            </p>
+
+            <p>
+
+                <strong>Email:</strong>
+
+                <%= reservation.borrower.email %>
+
+            </p>
+
+            <p>
+
+                <strong>Department:</strong>
+
+                <%= reservation.borrower.department %>
+
+            </p>
+
+            <p>
+
+                <strong>Year:</strong>
+
+                <%= reservation.borrower.year %>
+
+            </p>
+
+            <hr>
+
+            <p>
+
+                <strong>Owner:</strong>
+
+                <%= reservation.owner.name %>
+
+            </p>
+
+            <p>
+
+                <strong>Location:</strong>
+
+                <%= reservation.resource.location %>
+
+            </p>
+
+            <p>
+
+                <strong>Start Date:</strong>
+
+                <%= reservation.startDate.toLocaleDateString() %>
+
+            </p>
+
+            <p>
+
+                <strong>End Date:</strong>
+
+                <%= reservation.endDate.toLocaleDateString() %>
+
+            </p>
+
+            <p>
+
+                <strong>Status:</strong>
+
+                <span class="badge bg-primary">
+
+                    <%= reservation.status %>
+
+                </span>
+
+            </p>
+
+            <p>
+
+                <strong>Remarks:</strong>
+
+                <br>
+
+                <%= reservation.remarks || "No remarks provided." %>
+
+            </p>
+
+            <div class="mt-4">
+
+                <a
+                    href="javascript:history.back()"
+                    class="btn btn-secondary">
+
+                    Back
+
+                </a>
+
+                <% if (
+                    reservation.owner._id.toString() === user._id.toString() &&
+                    reservation.status === "Pending"
+                ) { %>
+
+                    <form
+                        action="/reservations/<%= reservation._id %>/approve"
+                        method="POST"
+                        class="d-inline">
+
+                        <button
+                            type="submit"
+                            class="btn btn-success">
+
+                            Approve
+
+                        </button>
+
+                    </form>
+
+                    <form
+                        action="/reservations/<%= reservation._id %>/reject"
+                        method="POST"
+                        class="d-inline">
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger">
+
+                            Reject
+
+                        </button>
+
+                    </form>
+
+                <% } %>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

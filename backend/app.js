@@ -2,6 +2,8 @@ const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const path = require("path");
+const session = require("express-session");
+const flash = require("connect-flash");
 
 const notFound = require("./middleware/notFoundMiddleware");
 const errorHandler = require("./middleware/errorMiddleware");
@@ -11,8 +13,10 @@ const resourceRoutes = require("./routes/resourceRoutes");
 
 const expressLayouts = require("express-ejs-layouts");
 
-const viewRoutes = require("./routes/viewRoutes");
+
 const reservationRoutes = require("./routes/reservationRoutes");
+
+
 
 const app = express();
 
@@ -46,6 +50,62 @@ app.use(
 
 app.use(cookieParser());
 
+const jwt = require("jsonwebtoken");
+const User = require("./models/User");
+
+app.use(async (req, res, next) => {
+
+    res.locals.currentUser = null;
+
+    const token = req.cookies.token;
+
+    if (!token) {
+        return next();
+    }
+
+    try {
+
+        const decoded = jwt.verify(
+            token,
+            process.env.JWT_SECRET
+        );
+
+        const user = await User.findById(decoded.id);
+
+        res.locals.currentUser = user;
+
+    } catch (error) {
+
+        res.locals.currentUser = null;
+
+    }
+
+    next();
+
+});
+
+app.use(
+    session({
+        secret: process.env.JWT_SECRET,
+        resave: false,
+        saveUninitialized: false
+    })
+);
+
+app.use(flash());
+
+app.use((req, res, next) => {
+
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+
+    next();
+
+});
+
+const viewRoutes = require("./routes/viewRoutes");
+const authViewRoutes = require("./routes/authViewRoutes");
+
 /*
 |--------------------------------------------------------------------------
 | Logger
@@ -71,6 +131,14 @@ app.use(express.static(path.join(__dirname, "public")));
 */
 
 app.use("/", viewRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| View Auth Routes
+|--------------------------------------------------------------------------
+*/
+
+app.use("/", authViewRoutes);
 
 /*
 |--------------------------------------------------------------------------

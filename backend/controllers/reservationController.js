@@ -1,5 +1,6 @@
 const Reservation = require("../models/Reservation");
 const Resource = require("../models/Resource");
+const User = require("../models/User");
 
 const {
     createReservationSchema,
@@ -174,11 +175,17 @@ const approveReservation = async (req, res) => {
         await reservation.resource.save();
         await reservation.save();
 
-        return res.status(200).json({
-            success: true,
-            message: "Reservation approved.",
-            reservation
-        });
+        if (req.originalUrl.startsWith("/api/")) {
+
+            return res.status(200).json({
+                success: true,
+                message: "Reservation approved successfully.",
+                reservation
+            });
+
+        }
+
+        return res.redirect("/owner/reservations");
 
     } catch (error) {
 
@@ -232,11 +239,17 @@ const rejectReservation = async (req, res) => {
 
         await reservation.save();
 
-        return res.status(200).json({
-            success: true,
-            message: "Reservation rejected.",
-            reservation
-        });
+        if (req.originalUrl.startsWith("/api/")) {
+
+            return res.status(200).json({
+                success: true,
+                message: "Reservation rejected successfully.",
+                reservation
+            });
+
+        }
+
+        return res.redirect("/owner/reservations");
 
     } catch (error) {
 
@@ -474,6 +487,257 @@ const getOwnerReservations = async (req, res) => {
 
 };
 
+/* ===================================
+   Reservation Views
+=================================== */
+
+const renderReservationForm = async (req, res) => {
+
+    try {
+
+        const resource = await Resource.findById(req.params.id)
+            .populate("owner", "name email")
+            .populate("category", "name");
+
+        if (!resource || resource.isDeleted) {
+            return res.status(404).render("404", {
+                title: "Resource Not Found",
+                currentPage: "/resources",
+                user: req.user || null
+            });
+        }
+
+        if (resource.owner._id.toString() === req.user._id.toString()) {
+            req.flash("error", "You cannot reserve your own resource.");
+            return res.redirect(`/resources/${resource._id}`);
+        }
+
+        if (resource.availabilityStatus !== "Available") {
+            req.flash("error", "Resource is currently unavailable.");
+            return res.redirect(`/resources/${resource._id}`);
+        }
+
+        res.render("reservations/new", {
+            title: "Reserve Resource",
+            currentPage: "/resources",
+            resource,
+            user: req.user
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        req.flash("error", "Something went wrong.");
+
+        res.redirect("/resources");
+
+    }
+
+};
+
+// const createReservationView = async (req, res) => {
+
+//     try {
+
+//         await createReservation(req, {
+//             status: () => ({
+//                 json: (data) => {
+
+//                     if (data.success) {
+
+//                         req.flash(
+//                             "success",
+//                             "Reservation request submitted successfully."
+//                         );
+
+//                         return res.redirect("/reservations/success");
+//                     }
+
+//                     req.flash("error", data.message);
+
+//                     return res.redirect(`/resources/${req.params.id}`);
+
+//                 }
+//             })
+//         });
+
+//     } catch (error) {
+
+//         console.error(error);
+
+//         req.flash("error", "Unable to submit reservation.");
+
+//         res.redirect(`/resources/${req.params.id}`);
+
+//     }
+
+// };
+
+const createReservationView = async (req, res) => {
+
+    try {
+
+        const { error } = createReservationSchema.validate(req.body);
+
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+
+        const { startDate, endDate, remarks } = req.body;
+
+        const resource = await Resource.findById(req.params.id);
+
+        if (!resource || resource.isDeleted) {
+            return res.status(404).send("Resource not found.");
+        }
+
+        if (resource.owner.toString() === req.user._id.toString()) {
+            return res.status(400).send("You cannot reserve your own resource.");
+        }
+
+        if (
+            resource.availableQuantity <= 0 ||
+            resource.availabilityStatus !== "Available"
+        ) {
+            return res.status(400).send("Resource is unavailable.");
+        }
+
+        const overlap = await Reservation.findOne({
+            resource: resource._id,
+            status: "Approved",
+            startDate: { $lte: endDate },
+            endDate: { $gte: startDate }
+        });
+
+        if (overlap) {
+            return res.status(409).send(
+                "Resource already reserved for these dates."
+            );
+        }
+
+        await Reservation.create({
+
+            resource: resource._id,
+
+            borrower: req.user._id,
+
+            owner: resource.owner,
+
+            startDate,
+
+            endDate,
+
+            remarks
+
+        });
+
+        return res.redirect(`/resources/${resource._id}`);
+
+    } catch (error) {
+
+        return res.status(500).send(error.message);
+
+    }
+
+};
+const renderMyReservationsPage = async (req, res) => {
+
+    try {
+
+        const reservations = await Reservation.find({
+            borrower: req.user._id
+        })
+            .populate("resource", "title images location")
+            .populate("owner", "name email")
+            .sort({ createdAt: -1 });
+
+        res.render("reservations/index", {
+            title: "My Reservations",
+            currentPage: "/reservations",
+            reservations
+        });
+
+    } catch (error) {
+
+        return res.status(500).send(error.message);
+
+    }
+
+};
+const renderOwnerReservationsPage = async (req, res) => {
+    console.log("Logged in user:", req.user._id);
+
+const reservations = await Reservation.find({
+    owner: req.user._id
+})
+.populate("resource", "title images location")
+.populate("borrower", "name email")
+.sort({ createdAt: -1 });
+
+console.log("Reservations found:", reservations.length);
+console.log(reservations);
+
+    try {
+
+        const reservations = await Reservation.find({
+            owner: req.user._id
+        })
+            .populate("resource", "title images location")
+            .populate("borrower", "name email")
+            .sort({ createdAt: -1 });
+
+        res.render("reservations/owner", {
+            title: "Reservation Requests",
+            currentPage: "/owner/reservations",
+            reservations
+        });
+
+    } catch (error) {
+
+        return res.status(500).send(error.message);
+
+    }
+
+};
+const renderReservationDetailsPage = async (req, res) => {
+
+    try {
+
+        const reservation = await Reservation.findById(req.params.id)
+            .populate("resource")
+            .populate("borrower", "name email department year")
+            .populate("owner", "name email");
+
+        if (!reservation) {
+            return res.status(404).send("Reservation not found.");
+        }
+
+        const userId = req.user._id.toString();
+
+        if (
+            reservation.borrower._id.toString() !== userId &&
+            reservation.owner._id.toString() !== userId &&
+            req.user.role !== "admin"
+        ) {
+            return res.status(403).send("Access denied.");
+        }
+
+        res.render("reservations/show", {
+            title: "Reservation Details",
+            currentPage: "/reservations",
+            reservation,
+            user: req.user
+        });
+
+    } catch (error) {
+
+        return res.status(500).send(error.message);
+
+    }
+
+};
+
 module.exports = {
     createReservation,
     approveReservation,
@@ -482,5 +746,10 @@ module.exports = {
     getReservation,
     getReservations,
     getMyReservations,
-    getOwnerReservations
+    getOwnerReservations,
+    renderReservationForm,
+    createReservationView,
+    renderMyReservationsPage,
+    renderOwnerReservationsPage,
+    renderReservationDetailsPage
 };

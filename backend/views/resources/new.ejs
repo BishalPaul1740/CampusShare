@@ -1,0 +1,187 @@
+<div class="container py-5">
+
+    <h2 class="mb-4">
+
+        Create Resource
+
+    </h2>
+
+    <form
+        action="/resources/new"
+        method="POST"
+        enctype="multipart/form-data">
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Title
+
+            </label>
+
+            <input
+                type="text"
+                name="title"
+                class="form-control"
+                required>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Description
+
+            </label>
+
+            <textarea
+                name="description"
+                rows="5"
+                class="form-control"
+                required></textarea>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Category
+
+            </label>
+
+            <select
+                name="category"
+                class="form-select"
+                required>
+
+                <% categories.forEach(category => { %>
+
+                    <option value="<%= category._id %>">
+
+                        <%= category.name %>
+
+                    </option>
+
+                <% }) %>
+
+            </select>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Location
+
+            </label>
+
+            <input
+                type="text"
+                name="location"
+                class="form-control"
+                required>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+
+                <label class="form-label">
+
+                    Deposit
+
+                </label>
+
+                <input
+                    type="number"
+                    name="deposit"
+                    class="form-control"
+                    value="0">
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <label class="form-label">
+
+                    Quantity
+
+                </label>
+
+                <input
+                    type="number"
+                    name="quantity"
+                    class="form-control"
+                    value="1">
+
+            </div>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Condition
+
+            </label>
+
+            <select
+                name="condition"
+                class="form-select">
+
+                <option>New</option>
+                <option>Excellent</option>
+                <option selected>Good</option>
+                <option>Fair</option>
+
+            </select>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Images
+
+            </label>
+
+            <input
+                type="file"
+                name="images"
+                class="form-control"
+                multiple>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Tags
+
+            </label>
+
+            <input
+                type="text"
+                name="tags"
+                class="form-control"
+                placeholder="book, engineering, electronics">
+
+        </div>
+
+        <button
+            class="btn btn-primary">
+
+            Create Resource
+
+        </button>
+
+    </form>
+
+</div>

@@ -3,11 +3,17 @@ const User = require("../models/User");
 
 const isLoggedIn = async (req, res, next) => {
     try {
+        console.log("----------------");
+        console.log("Cookies:", req.cookies);
+        console.log("Token:", req.cookies.token);
 
         // Get token from cookies
         const token = req.cookies.token;
 
         if (!token) {
+            if (!req.originalUrl.startsWith("/api")) {
+                return res.redirect("/login");
+            }
             return res.status(401).json({
                 success: false,
                 message: "Not authorized. Please login."
@@ -19,23 +25,37 @@ const isLoggedIn = async (req, res, next) => {
             token,
             process.env.JWT_SECRET
         );
+        console.log("Decoded:", decoded);
 
+        // Find user
         // Find user
         const user = await User.findById(decoded.id);
 
+        console.log("User:", user);
+
         if (!user) {
+
+            if (!req.originalUrl.startsWith("/api")) {
+                return res.redirect("/login");
+            }
+
             return res.status(401).json({
                 success: false,
                 message: "User not found."
             });
+
         }
 
         // Attach user to request
         req.user = user;
 
+        console.log("Reached next()");
         next();
 
     } catch (error) {
+        if (!req.originalUrl.startsWith("/api")) {
+            return res.redirect("/login");
+        }
 
         return res.status(401).json({
             success: false,
@@ -85,8 +105,40 @@ const isOwner = (ownerField = "owner") => {
 
 };
 
+const optionalAuth = async (req, res, next) => {
+
+    try {
+
+        const token = req.cookies.token;
+
+        if (!token) {
+            req.user = null;
+            return next();
+        }
+
+        const decoded = jwt.verify(
+            token,
+            process.env.JWT_SECRET
+        );
+
+        const user = await User.findById(decoded.id);
+
+        req.user = user || null;
+
+        next();
+
+    } catch (error) {
+
+        req.user = null;
+        next();
+
+    }
+
+};
+
 module.exports = {
     isLoggedIn,
+    optionalAuth,
     isAdmin,
     isOwner
 };

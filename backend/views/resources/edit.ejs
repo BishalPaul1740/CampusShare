@@ -1,0 +1,313 @@
+<div class="container py-5">
+
+    <h2 class="mb-4">
+
+        Edit Resource
+
+    </h2>
+
+    <form
+        action="/resources/<%= resource._id %>/edit"
+        method="POST"
+        enctype="multipart/form-data">
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Title
+
+            </label>
+
+            <input
+                type="text"
+                name="title"
+                class="form-control"
+                value="<%= resource.title %>"
+                required>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Description
+
+            </label>
+
+            <textarea
+                name="description"
+                rows="5"
+                class="form-control"
+                required><%= resource.description %></textarea>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Category
+
+            </label>
+
+            <select
+                name="category"
+                class="form-select"
+                required>
+
+                <% categories.forEach(category => { %>
+
+                    <option
+                        value="<%= category._id %>"
+                        <%= resource.category.toString() === category._id.toString() ? "selected" : "" %>>
+
+                        <%= category.name %>
+
+                    </option>
+
+                <% }) %>
+
+            </select>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Location
+
+            </label>
+
+            <input
+                type="text"
+                name="location"
+                class="form-control"
+                value="<%= resource.location %>"
+                required>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+
+                <label class="form-label">
+
+                    Deposit
+
+                </label>
+
+                <input
+                    type="number"
+                    name="deposit"
+                    class="form-control"
+                    value="<%= resource.deposit %>">
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <label class="form-label">
+
+                    Quantity
+
+                </label>
+
+                <input
+                    type="number"
+                    name="quantity"
+                    class="form-control"
+                    value="<%= resource.quantity %>">
+
+            </div>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Available Quantity
+
+            </label>
+
+            <input
+                type="number"
+                name="availableQuantity"
+                class="form-control"
+                value="<%= resource.availableQuantity %>">
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Condition
+
+            </label>
+
+            <select
+                name="condition"
+                class="form-select">
+
+                <option
+                    value="New"
+                    <%= resource.condition === "New" ? "selected" : "" %>>
+
+                    New
+
+                </option>
+
+                <option
+                    value="Excellent"
+                    <%= resource.condition === "Excellent" ? "selected" : "" %>>
+
+                    Excellent
+
+                </option>
+
+                <option
+                    value="Good"
+                    <%= resource.condition === "Good" ? "selected" : "" %>>
+
+                    Good
+
+                </option>
+
+                <option
+                    value="Fair"
+                    <%= resource.condition === "Fair" ? "selected" : "" %>>
+
+                    Fair
+
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Availability
+
+            </label>
+
+            <select
+                name="availabilityStatus"
+                class="form-select">
+
+                <option
+                    value="Available"
+                    <%= resource.availabilityStatus === "Available" ? "selected" : "" %>>
+
+                    Available
+
+                </option>
+
+                <option
+                    value="Unavailable"
+                    <%= resource.availabilityStatus === "Unavailable" ? "selected" : "" %>>
+
+                    Unavailable
+
+                </option>
+
+                <option
+                    value="Maintenance"
+                    <%= resource.availabilityStatus === "Maintenance" ? "selected" : "" %>>
+
+                    Maintenance
+
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="mb-4">
+
+            <label class="form-label">
+
+                Current Images
+
+            </label>
+
+            <div class="row g-3">
+
+                <% resource.images.forEach(image => { %>
+
+                    <div class="col-md-3">
+
+                        <img
+                            src="<%= image.url %>"
+                            class="img-fluid rounded border">
+
+                    </div>
+
+                <% }) %>
+
+            </div>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Upload New Images
+                (Optional)
+
+            </label>
+
+            <input
+                type="file"
+                name="images"
+                class="form-control"
+                multiple>
+
+        </div>
+
+        <div class="mb-4">
+
+            <label class="form-label">
+
+                Tags
+
+            </label>
+
+            <input
+                type="text"
+                name="tags"
+                class="form-control"
+                value="<%= resource.tags.join(', ') %>">
+
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <button
+                class="btn btn-warning">
+
+                Update Resource
+
+            </button>
+
+            <a
+                href="/resources/<%= resource._id %>"
+                class="btn btn-secondary">
+
+                Cancel
+
+            </a>
+
+        </div>
+
+    </form>
+
+</div>

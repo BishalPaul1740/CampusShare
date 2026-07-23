@@ -47,7 +47,12 @@ const register = async (req, res) => {
         // Check if email already exists
         const existingEmail = await User.findOne({ email });
         console.log("5. Email checked");
+        
         if (existingEmail) {
+            if (!req.originalUrl.startsWith("/api")) {
+                req.flash("error", "Email already registered.");
+                return res.redirect("/register");
+            }
             return res.status(409).json({
                 success: false,
                 message: "Email already registered."
@@ -102,6 +107,10 @@ const register = async (req, res) => {
         });
         console.log("8. user created");
 
+        if (!req.originalUrl.startsWith("/api")) {
+            return res.redirect("/login");
+        }
+
         return res.status(201).json({
             success: true,
             message: "Registration successful.",
@@ -133,51 +142,69 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     try {
 
-        // Validate Request Body
         const { error } = loginSchema.validate(req.body);
 
         if (error) {
+
+            if (!req.originalUrl.startsWith("/api")) {
+                req.flash("error", error.details[0].message);
+                return res.redirect("/login");
+            }
+
             return res.status(400).json({
                 success: false,
                 message: error.details[0].message
             });
+
         }
 
         const { email, password } = req.body;
 
-        // Find user (password is select:false)
         const user = await User.findOne({ email }).select("+password");
 
         if (!user) {
+
+            if (!req.originalUrl.startsWith("/api")) {
+                req.flash("error", "Invalid email or password.");
+                return res.redirect("/login");
+            }
+
             return res.status(401).json({
                 success: false,
                 message: "Invalid email or password."
             });
+
         }
 
-        // Compare password
         const isMatch = await user.comparePassword(password);
 
         if (!isMatch) {
+
+            if (!req.originalUrl.startsWith("/api")) {
+                req.flash("error", "Invalid email or password.");
+                return res.redirect("/login");
+            }
+
             return res.status(401).json({
                 success: false,
                 message: "Invalid email or password."
             });
+
         }
 
-        // Generate JWT
         const token = generateToken(user._id, user.role);
 
-        // Cookie Options
-        const cookieOptions = {
+        res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
             maxAge: 7 * 24 * 60 * 60 * 1000
-        };
+        });
 
-        // Send Cookie
-        res.cookie("token", token, cookieOptions);
+        if (!req.originalUrl.startsWith("/api")) {
+            req.flash("success", `Welcome back, ${user.name}!`);
+            return res.redirect("/profile");
+        }
 
         return res.status(200).json({
             success: true,
@@ -197,8 +224,10 @@ const login = async (req, res) => {
 
     } catch (error) {
 
-        console.error("LOGIN ERROR:");
-        console.error(error);
+        if (!req.originalUrl.startsWith("/api")) {
+            req.flash("error", "Something went wrong. Please try again.");
+            return res.redirect("/login");
+        }
 
         return res.status(500).json({
             success: false,
@@ -216,6 +245,17 @@ const logout = async (req, res) => {
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict"
         });
+
+        if (!req.originalUrl.startsWith("/api")) {
+
+            req.flash(
+                "success",
+                "Logged out successfully."
+            );
+
+            return res.redirect("/");
+
+        }
 
         return res.status(200).json({
             success: true,

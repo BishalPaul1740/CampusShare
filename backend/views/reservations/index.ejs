@@ -1,0 +1,138 @@
+<div class="container py-5">
+
+    <h2 class="mb-4">
+
+        My Reservations
+
+    </h2>
+
+    <% if(reservations.length === 0){ %>
+
+        <div class="alert alert-info">
+
+            You have not made any reservations yet.
+
+        </div>
+
+    <% } else { %>
+
+        <div class="row">
+
+            <% reservations.forEach(reservation => { %>
+
+                <div class="col-lg-6 mb-4">
+
+                    <div class="card shadow-sm h-100">
+
+                        <% if(reservation.resource.images.length > 0){ %>
+
+                            <img
+                                src="<%= reservation.resource.images[0].url %>"
+                                class="card-img-top"
+                                style="height:220px;object-fit:cover;">
+
+                        <% } %>
+
+                        <div class="card-body">
+
+                            <h4>
+
+                                <%= reservation.resource.title %>
+
+                            </h4>
+
+                            <hr>
+
+                            <p>
+
+                                <strong>Owner:</strong>
+
+                                <%= reservation.owner.name %>
+
+                            </p>
+
+                            <p>
+
+                                <strong>Location:</strong>
+
+                                <%= reservation.resource.location %>
+
+                            </p>
+
+                            <p>
+
+                                <strong>Start:</strong>
+
+                                <%= reservation.startDate.toLocaleDateString() %>
+
+                            </p>
+
+                            <p>
+
+                                <strong>End:</strong>
+
+                                <%= reservation.endDate.toLocaleDateString() %>
+
+                            </p>
+
+                            <p>
+
+                                <strong>Status:</strong>
+
+                                <% if(reservation.status==="Pending"){ %>
+
+                                    <span class="badge bg-warning text-dark">
+
+                                        Pending
+
+                                    </span>
+
+                                <% } else if(reservation.status==="Approved"){ %>
+
+                                    <span class="badge bg-success">
+
+                                        Approved
+
+                                    </span>
+
+                                <% } else if(reservation.status==="Rejected"){ %>
+
+                                    <span class="badge bg-danger">
+
+                                        Rejected
+
+                                    </span>
+
+                                <% } else if(reservation.status==="Cancelled"){ %>
+
+                                    <span class="badge bg-secondary">
+
+                                        Cancelled
+
+                                    </span>
+
+                                <% } else { %>
+
+                                    <span class="badge bg-primary">
+
+                                        <%= reservation.status %>
+
+                                    </span>
+
+                                <% } %>
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            <% }) %>
+
+        </div>
+
+    <% } %>
+
+</div>

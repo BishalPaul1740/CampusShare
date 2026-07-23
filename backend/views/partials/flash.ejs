@@ -1,23 +1,38 @@
+<% if(success.length){ %>
+
 <div class="container mt-3">
 
-    <!-- Success Message -->
+    <div class="alert alert-success alert-dismissible fade show">
 
-    <!--
-    <div class="alert alert-success">
+        <%= success %>
 
-        Resource Added Successfully
-
-    </div>
-    -->
-
-    <!-- Error Message -->
-
-    <!--
-    <div class="alert alert-danger">
-
-        Invalid Credentials
+        <button
+            class="btn-close"
+            data-bs-dismiss="alert">
+        </button>
 
     </div>
-    -->
 
 </div>
+
+<% } %>
+
+
+<% if(error.length){ %>
+
+<div class="container mt-3">
+
+    <div class="alert alert-danger alert-dismissible fade show">
+
+        <%= error %>
+
+        <button
+            class="btn-close"
+            data-bs-dismiss="alert">
+        </button>
+
+    </div>
+
+</div>
+
+<% } %>
