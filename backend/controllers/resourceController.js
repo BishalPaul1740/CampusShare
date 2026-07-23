@@ -527,30 +527,130 @@ const deleteResource = async (req, res) => {
     }
 
 };
-
 const renderResourcesPage = async (req, res) => {
-
     try {
-
-        const resources = await Resource.find({
+        const {
+            search,
+            category,
+            availability,
+            sort,
+            page
+        } = req.query;
+        const filter = {
             isDeleted: false
-        })
+        };
+        // ===============================
+        // Search (Title, Description, Tags, Category)
+        // ===============================
+        if (search && search.trim() !== "") {
+            const matchingCategories = await Category.find({
+                name: {
+                    $regex: search.trim(),
+                    $options: "i"
+                }
+            }).select("_id");
+            const categoryIds = matchingCategories.map(c => c._id);
+            filter.$or = [
+                {
+                    $text: {
+                        $search: search.trim()
+                    }
+                },
+                {
+                    category: {
+                        $in: categoryIds
+                    }
+                }
+            ];
+        }
+        // ===============================
+        // Category Filter
+        // ===============================
+        if (category && category !== "") {
+            const selectedCategory = await Category.findOne({
+                name: category
+            });
+            if (selectedCategory) {
+                filter.category = selectedCategory._id;
+            }
+        }
+        // ===============================
+        // Availability Filter
+        // ===============================
+        if (availability && availability !== "") {
+            filter.availabilityStatus = availability;
+        }
+        let sortOption = {
+            createdAt: -1
+        };
+
+        switch (sort) {
+
+            case "oldest":
+                sortOption = {
+                    createdAt: 1
+                };
+                break;
+
+            case "titleAsc":
+                sortOption = {
+                    title: 1
+                };
+                break;
+
+            case "titleDesc":
+                sortOption = {
+                    title: -1
+                };
+                break;
+
+            case "depositAsc":
+                sortOption = {
+                    deposit: 1
+                };
+                break;
+
+            case "depositDesc":
+                sortOption = {
+                    deposit: -1
+                };
+                break;
+
+        }
+        const currentPage = parseInt(page) || 1;
+        const limit = 8;
+        const skip = (currentPage - 1) * limit;
+        const totalResources = await Resource.countDocuments(filter);
+        const totalPages = Math.ceil(totalResources / limit);
+        const resources = await Resource.find(filter)
             .populate("owner", "name")
             .populate("category", "name")
-            .sort({ createdAt: -1 });
-
+            .sort(sortOption)
+            .skip(skip)
+            .limit(limit);
+        const categories = await Category.find().sort({
+            name: 1
+        });
         res.render("resources/index", {
             title: "Resources",
             currentPage: "/resources",
-            resources
+
+            resources,
+            categories,
+
+            search: search || "",
+            selectedCategory: category || "",
+            selectedAvailability: availability || "",
+            selectedSort: sort || "",
+
+            currentPageNumber: currentPage,
+            totalPages,
+            query: req.query
         });
-
     } catch (error) {
-
-        return res.status(500).send(error.message);
-
+        console.log(error);
+        res.status(500).send(error.message);
     }
-
 };
 
 const renderResourceDetailsPage = async (req, res) => {

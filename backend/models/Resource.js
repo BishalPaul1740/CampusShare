@@ -303,7 +303,7 @@ const resourceSchema = new mongoose.Schema(
 |--------------------------------------------------------------------------
 */
 
-resourceSchema.index({ title: "text", description: "text" });
+resourceSchema.index({ title: "text", description: "text", tags: "text" });
 
 resourceSchema.index({ category: 1 });
 
