@@ -1,6 +1,7 @@
 const Reservation = require("../models/Reservation");
 const Resource = require("../models/Resource");
 const User = require("../models/User");
+const Notification = require("../models/Notification");
 
 const {
     createReservationSchema,
@@ -83,6 +84,14 @@ const createReservation = async (req, res) => {
             startDate,
             endDate,
             remarks
+        });
+        await Notification.create({
+            receiver: resource.owner,
+            sender: req.user._id,
+            type: "reservation_request",
+            message: `${req.user.name} requested your resource "${resource.title}".`,
+            resource: resource._id,
+            reservation: reservation._id
         });
 
         return res.status(201).json({
@@ -175,6 +184,15 @@ const approveReservation = async (req, res) => {
         await reservation.resource.save();
         await reservation.save();
 
+        await Notification.create({
+            receiver: reservation.borrower,
+            sender: req.user._id,
+            type: "reservation_approved",
+            message: `Your reservation for "${reservation.resource.title}" has been approved.`,
+            resource: reservation.resource._id,
+            reservation: reservation._id
+        });
+
         if (req.originalUrl.startsWith("/api/")) {
 
             return res.status(200).json({
@@ -238,6 +256,16 @@ const rejectReservation = async (req, res) => {
         reservation.remarks = req.body.remarks;
 
         await reservation.save();
+        const resource = await Resource.findById(reservation.resource);
+
+        await Notification.create({
+            receiver: reservation.borrower,
+            sender: req.user._id,
+            type: "reservation_rejected",
+            message: `Your reservation for "${resource.title}" has been rejected.`,
+            resource: resource._id,
+            reservation: reservation._id
+        });
 
         if (req.originalUrl.startsWith("/api/")) {
 
@@ -315,6 +343,16 @@ const cancelReservation = async (req, res) => {
         reservation.remarks = req.body.remarks || reservation.remarks;
 
         await reservation.save();
+        const resource = await Resource.findById(reservation.resource);
+
+        await Notification.create({
+            receiver: reservation.owner,
+            sender: req.user._id,
+            type: "reservation_rejected",
+            message: `${req.user.name} cancelled the reservation for "${resource.title}".`,
+            resource: resource._id,
+            reservation: reservation._id
+        });
 
         return res.status(200).json({
             success: true,
@@ -616,20 +654,21 @@ const createReservationView = async (req, res) => {
             );
         }
 
-        await Reservation.create({
-
+        const reservation = await Reservation.create({
             resource: resource._id,
-
             borrower: req.user._id,
-
             owner: resource.owner,
-
             startDate,
-
             endDate,
-
             remarks
-
+        });
+        await Notification.create({
+            receiver: resource.owner,
+            sender: req.user._id,
+            type: "reservation_request",
+            message: `${req.user.name} requested your resource "${resource.title}".`,
+            resource: resource._id,
+            reservation: reservation._id
         });
 
         return res.redirect(`/resources/${resource._id}`);

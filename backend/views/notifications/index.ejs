@@ -1,0 +1,128 @@
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2>
+
+            Notifications
+
+        </h2>
+
+        <% if (notifications.length > 0) { %>
+
+            <form
+                action="/notifications/read-all"
+                method="POST">
+
+                <button
+                    type="submit"
+                    class="btn btn-outline-primary">
+
+                    Mark All as Read
+
+                </button>
+
+            </form>
+
+        <% } %>
+
+    </div>
+
+    <% if (notifications.length === 0) { %>
+
+        <div class="alert alert-info">
+
+            No notifications yet.
+
+        </div>
+
+    <% } else { %>
+
+        <% notifications.forEach(notification => { %>
+
+            <div class="card shadow-sm mb-3 <%= notification.isRead ? '' : 'border-primary' %>">
+
+                <div class="card-body <%= notification.isRead ? '' : 'bg-primary-subtle' %>">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+
+                            <p class="mb-2">
+
+                                <%= notification.message %>
+
+                            </p>
+
+                            <% if (notification.sender) { %>
+
+                                <small class="text-muted">
+
+                                    From:
+                                    <%= notification.sender.name %>
+
+                                </small>
+
+                                <br>
+
+                            <% } %>
+
+                            <% if (notification.resource) { %>
+
+                                <small class="text-muted">
+
+                                    Resource:
+                                    <%= notification.resource.title %>
+
+                                </small>
+
+                                <br>
+
+                            <% } %>
+
+                            <small class="text-muted">
+
+                                <%= notification.createdAt.toLocaleString() %>
+
+                            </small>
+
+                        </div>
+
+                        <% if (!notification.isRead) { %>
+
+                        <form
+                            action="/notifications/<%= notification._id %>/read"
+                            method="POST"
+                            class="mt-2">
+
+                            <button
+                                class="btn btn-sm btn-outline-primary">
+
+                                Mark as Read
+
+                            </button>
+
+                        </form>
+
+                        <% } else { %>
+
+                        <span class="badge bg-success">
+
+                            Read
+
+                        </span>
+
+                        <% } %>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        <% }) %>
+
+    <% } %>
+
+</div>

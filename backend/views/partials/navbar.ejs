@@ -2,13 +2,9 @@
 
     <div class="container">
 
-        <a class="navbar-brand fw-bold"
-           href="/">
-
+        <a class="navbar-brand fw-bold" href="/">
             <i class="bi bi-box-seam"></i>
-
             CampusShare
-
         </a>
 
         <button
@@ -28,51 +24,82 @@
             <ul class="navbar-nav ms-auto">
 
                 <li class="nav-item">
-
-                    <a class="nav-link <%= currentPage==='/' ? 'active':'' %>"
-                       href="/">
-
+                    <a
+                        class="nav-link <%= currentPage === '/' ? 'active' : '' %>"
+                        href="/">
                         Home
-
                     </a>
-
                 </li>
 
                 <li class="nav-item">
-
-                    <a class="nav-link <%= currentPage === '/resources' ? 'active' : '' %>"
+                    <a
+                        class="nav-link <%= currentPage === '/resources' ? 'active' : '' %>"
                         href="/resources">
-
-                            Resources
-
+                        Resources
                     </a>
-
                 </li>
 
-                <li class="nav-item">
+                <% if (currentUser) { %>
 
-                    <a class="nav-link"
-                       href="#">
+                    <li class="nav-item">
+                        <a
+                            class="nav-link <%= currentPage === '/reservations' ? 'active' : '' %>"
+                            href="/reservations">
+                            My Reservations
+                        </a>
+                    </li>
 
-                        Categories
+                    <li class="nav-item">
+                        <a
+                            class="nav-link <%= currentPage === '/owner/reservations' ? 'active' : '' %>"
+                            href="/owner/reservations">
+                            Requests
+                        </a>
+                    </li>
 
-                    </a>
+                    <li class="nav-item">
 
-                </li>
+                        <a
+                            class="nav-link position-relative <%= currentPage === '/notifications' ? 'active' : '' %>"
+                            href="/notifications">
+
+                            <i class="bi bi-bell-fill"></i>
+
+                            Notifications
+
+                            <% if (
+                                typeof unreadNotificationCount !== "undefined" &&
+                                unreadNotificationCount > 0
+                            ) { %>
+
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+
+                                    <%= unreadNotificationCount %>
+
+                                </span>
+
+                            <% } %>
+
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item">
+                        <a
+                            class="nav-link <%= currentPage === '/profile' ? 'active' : '' %>"
+                            href="/profile">
+                            Profile
+                        </a>
+                    </li>
+
+                <% } %>
 
             </ul>
 
             <div class="ms-lg-3">
 
-                <% if(currentUser){ %>
-
-                    <a
-                        href="/profile"
-                        class="btn btn-outline-light btn-sm me-2">
-
-                        Profile
-
-                    </a>
+                <% if (currentUser) { %>
 
                     <form
                         action="/logout"
@@ -80,7 +107,8 @@
                         class="d-inline">
 
                         <button
-                            class="btn btn-light btn-sm">
+                            type="submit"
+                            class="btn btn-outline-light btn-sm">
 
                             Logout
 

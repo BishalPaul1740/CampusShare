@@ -15,6 +15,8 @@ const expressLayouts = require("express-ejs-layouts");
 
 
 const reservationRoutes = require("./routes/reservationRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+const Notification = require("./models/Notification");
 
 
 
@@ -56,6 +58,7 @@ const User = require("./models/User");
 app.use(async (req, res, next) => {
 
     res.locals.currentUser = null;
+    res.locals.unreadNotificationCount = 0;
 
     const token = req.cookies.token;
 
@@ -74,9 +77,20 @@ app.use(async (req, res, next) => {
 
         res.locals.currentUser = user;
 
+        if (user) {
+
+            res.locals.unreadNotificationCount =
+                await Notification.countDocuments({
+                    receiver: user._id,
+                    isRead: false
+                });
+
+        }
+
     } catch (error) {
 
         res.locals.currentUser = null;
+        res.locals.unreadNotificationCount = 0;
 
     }
 
@@ -165,9 +179,9 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/resources", resourceRoutes);
 
-
 app.use("/api/reservations", reservationRoutes);
 
+app.use("/api/notifications", notificationRoutes);
 /*
 |--------------------------------------------------------------------------
 | 404 Middleware

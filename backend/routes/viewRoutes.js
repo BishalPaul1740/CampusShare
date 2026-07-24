@@ -3,6 +3,11 @@ const router = express.Router();
 
 const upload = require("../config/multer");
 const { isLoggedIn, optionalAuth } = require("../middleware/authMiddleware");
+const {
+    renderNotificationsPage,
+    markAllNotificationsReadView,
+    markNotificationReadView
+} = require("../controllers/notificationController");
 
 const {
     renderResourcesPage,
@@ -144,5 +149,25 @@ router.get("/profile", isLoggedIn, (req, res) => {
         user: req.user
     });
 });
+/* ===========================
+   Notifications
+=========================== */
+
+router.get(
+    "/notifications",
+    isLoggedIn,
+    renderNotificationsPage
+);
+
+router.post(
+    "/notifications/read-all",
+    isLoggedIn,
+    markAllNotificationsReadView
+);
+router.post(
+    "/notifications/:id/read",
+    isLoggedIn,
+    markNotificationReadView
+);
 
 module.exports = router;
